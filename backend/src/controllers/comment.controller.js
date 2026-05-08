@@ -1,7 +1,7 @@
 import { getAuth } from "@clerk/express";
 import Comment from "../models/comment.model.js";
-import User from "../models/User.model.js";
-import Post from "../models/Post.model.js";
+import User from "../models/user.model.js";
+import Post from "../models/post.model.js";
 import notificationModel from "../models/notification.model.js";
 
 // GET COMMENTS

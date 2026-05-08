@@ -1,5 +1,5 @@
 import { getAuth } from "@clerk/express";
-import User from "../models/User.model.js";
+import User from "../models/user.model.js";
 import notificationModel from "../models/notification.model.js";
 
 export const getNotification = async (req, res) => {
