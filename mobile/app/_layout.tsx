@@ -1,24 +1,45 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import React from "react";
+import { ClerkProvider } from "@clerk/expo";
+import * as SecureStore from "expo-secure-store";
+import { Stack } from "expo-router";
+import "../global.css";
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
-export const unstable_settings = {
-  anchor: '(tabs)',
+const tokenCache = {
+  getToken: async (key: string) => {
+    try {
+      return SecureStore.getItemAsync(key);
+    } catch (err) {
+      return null;
+    }
+  },
+  saveToken: async (key: string, token: string) => {
+    try {
+      return SecureStore.setItemAsync(key, token);
+    } catch (err) {
+      return;
+    }
+  },
+  deleteToken: async (key: string) => {
+    try {
+      return SecureStore.deleteItemAsync(key);
+    } catch (err) {
+      return;
+    }
+  },
 };
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-
+  const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
+  
+  if (!publishableKey) {
+    console.error("Missing EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY");
+  }
+  
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+    <ClerkProvider tokenCache={tokenCache} publishableKey={publishableKey!}>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="(auth)" />
       </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    </ClerkProvider>
   );
 }
